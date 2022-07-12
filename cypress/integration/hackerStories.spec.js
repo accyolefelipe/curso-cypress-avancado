@@ -319,3 +319,16 @@ context('Errors', () => {
       .should('be.visible')
   });
 });
+
+it('shows a "Loading ..." state before showing the results', () => {
+  cy.intercept('GET', '**/search**', {delay: 1000, fixture: 'stories'})
+    .as('resultWithDelay')
+
+  cy.visit('/');
+  
+  cy.assertLoadingIsShownAndHidden();
+
+  cy.wait('@resultWithDelay');
+
+  cy.get('.item').should('have.length', 2);
+})
